@@ -18,7 +18,15 @@ struct fontData{
     int r, g, b;
 };
 
-void LoadConfig(int& wWidth, int& wHeight, struct fontData* font, std::vector<std::shared_ptr<sf::Shape>>& entitys)
+struct entity{
+    float velX, velY;
+    float sizeX, sizeY;
+    std::string name;
+    std::shared_ptr<sf::Shape> shape;
+    sf::Text text;
+};
+
+void LoadConfig(int& wWidth, int& wHeight, struct fontData* font, std::vector<entity>& entitys)
 {
     const std::string& filepath = "config.txt";
     std::ifstream stream(filepath);
@@ -42,12 +50,17 @@ void LoadConfig(int& wWidth, int& wHeight, struct fontData* font, std::vector<st
             float radius;
             ss >> name >> posX >> posY >> velX >> velY
             >> r >> g >> b >> radius;
-            std::cout << r << " " << g << " " <<b << std::endl;
-            std::cout << posX << " " << posY << std::endl;
+            entity enti;
+            enti.name = name;
+            enti.velX = velX;
+            enti.velY = velY;
+            enti.sizeX = 2*radius;
+            enti.sizeY = 2*radius;
             std::shared_ptr<sf::Shape> circ = std::make_shared<sf::CircleShape>(radius);
             circ->setPosition(posX, posY);
             circ->setFillColor(sf::Color(r, g, b));
-            entitys.push_back(circ);
+            enti.shape = circ;
+            entitys.push_back(enti);
         }
         else if(word == "Rectangle")
         {
@@ -58,21 +71,27 @@ void LoadConfig(int& wWidth, int& wHeight, struct fontData* font, std::vector<st
             float sizeX, sizeY;
             ss >> name >> posX >> posY >> velX >> velY
             >> r >> g >> b >> sizeX >> sizeY;
+            entity enti;
+            enti.name = name;
+            enti.velX = velX;
+            enti.velY = velY;
+            enti.sizeX = sizeX;
+            enti.sizeY = sizeY;
             std::shared_ptr<sf::Shape> rect = std::make_shared<sf::RectangleShape>(sf::Vector2f(sizeX, sizeY));
             rect->setPosition(posX, posY);
             rect->setFillColor(sf::Color(r, g, b));
-            entitys.push_back(rect);
+            enti.shape = rect;
+            entitys.push_back(enti);
         }
 
     }
 }
-
 int main(int argc, char *argv[])
 {
     int wWidth = 1280;
     int wHeight = 720;
     fontData font;
-    std::vector<std::shared_ptr<sf::Shape>> entitys;
+    std::vector<entity> entitys;
     LoadConfig(wWidth, wHeight, &font, entitys);
     sf::RenderWindow window(sf::VideoMode(wWidth, wHeight), "SFML works!");
 
@@ -83,10 +102,11 @@ int main(int argc, char *argv[])
         std::cerr << "Could not load font!\n";
         exit(-1);
     }
-
-    sf::Text text("Sample Text", myFont, font.size);
-
-    text.setPosition(0, wHeight - (float)text.getCharacterSize());
+    for(auto& entity : entitys)
+    {
+        entity.text = sf::Text(entity.name, myFont, font.size);
+        entity.text.setPosition(entity.shape->getPosition().x, entity.shape->getPosition().y - (float)entity.text.getCharacterSize());
+    }
 
 
 
@@ -105,7 +125,8 @@ int main(int argc, char *argv[])
 
                 if (event.key.code == sf::Keyboard::Escape)
                     window.close();
-
+                else if (event.key.code == sf::Keyboard::Q)
+                    window.close();
               //  else if (event.key.code == sf::Keyboard::X)
               //  {
               //      circ.velX *= -1.0f;
@@ -115,14 +136,16 @@ int main(int argc, char *argv[])
             }
         }
 
-        float sx = 0.5f;
-        float sy = 0.5f;
         window.clear();
-        window.draw(text);
         for(auto& entity : entitys)
         {
-            entity->setPosition(entity->getPosition().x - 0.01f, entity->getPosition().y - 0.02f);
-            window.draw(*entity);
+            entity.shape->setPosition(entity.shape->getPosition().x - entity.velX, entity.shape->getPosition().y - entity.velY);
+            auto center = entity.text.getGlobalBounds().getSize() / 2.f;
+            float text_posX = entity.shape->getPosition().x + entity.sizeX/2.0f - center.x;
+            float text_posY = entity.shape->getPosition().y + entity.sizeY/2.0f - center.y;
+            entity.text.setPosition(text_posX,  text_posY - (float)entity.text.getCharacterSize()/2.0f);
+            window.draw(*entity.shape);
+            window.draw(entity.text);
         }
 
         window.display();
