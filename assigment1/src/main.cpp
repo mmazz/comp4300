@@ -5,12 +5,12 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/Window.hpp>
 #include <iostream>
 #include <memory>
 #include <sstream>
 #include <string>
 #include <fstream>
-
 
 struct fontData{
     std::string file;
@@ -26,6 +26,18 @@ struct entity{
     sf::Text text;
 };
 
+void checkBoundries(struct entity& ent, int width, int height)
+{
+    auto pos = ent.shape->getPosition();
+    if(pos.x < 0.0f)
+        ent.velX *= -1;
+    else if (pos.x > width - ent.sizeX)
+        ent.velX *= -1;
+    if(pos.y < 0.0f)
+        ent.velY *= -1;
+    else if (pos.y > height- ent.sizeY)
+        ent.velY*= -1;
+}
 void LoadConfig(int& wWidth, int& wHeight, struct fontData* font, std::vector<entity>& entitys)
 {
     const std::string& filepath = "config.txt";
@@ -43,17 +55,12 @@ void LoadConfig(int& wWidth, int& wHeight, struct fontData* font, std::vector<en
             ss >> font->file >> font->size >> font->r >> font->g >> font->b;
         else if(word == "Circle")
         {
-            std::string name;
             float posX, posY;
-            float velX, velY;
             int r, g, b;
             float radius;
-            ss >> name >> posX >> posY >> velX >> velY
-            >> r >> g >> b >> radius;
             entity enti;
-            enti.name = name;
-            enti.velX = velX;
-            enti.velY = velY;
+            ss >> enti.name >> posX >> posY >> enti.velX >> enti.velY
+            >> r >> g >> b >> radius;
             enti.sizeX = 2*radius;
             enti.sizeY = 2*radius;
             std::shared_ptr<sf::Shape> circ = std::make_shared<sf::CircleShape>(radius);
@@ -64,20 +71,12 @@ void LoadConfig(int& wWidth, int& wHeight, struct fontData* font, std::vector<en
         }
         else if(word == "Rectangle")
         {
-            std::string name;
             float posX, posY;
-            float velX, velY;
             int r, g, b;
-            float sizeX, sizeY;
-            ss >> name >> posX >> posY >> velX >> velY
-            >> r >> g >> b >> sizeX >> sizeY;
             entity enti;
-            enti.name = name;
-            enti.velX = velX;
-            enti.velY = velY;
-            enti.sizeX = sizeX;
-            enti.sizeY = sizeY;
-            std::shared_ptr<sf::Shape> rect = std::make_shared<sf::RectangleShape>(sf::Vector2f(sizeX, sizeY));
+            ss >> enti.name >> posX >> posY >> enti.velX >> enti.velY
+            >> r >> g >> b >> enti.sizeX >> enti.sizeY;
+            std::shared_ptr<sf::Shape> rect = std::make_shared<sf::RectangleShape>(sf::Vector2f(enti.sizeX, enti.sizeY));
             rect->setPosition(posX, posY);
             rect->setFillColor(sf::Color(r, g, b));
             enti.shape = rect;
@@ -86,6 +85,8 @@ void LoadConfig(int& wWidth, int& wHeight, struct fontData* font, std::vector<en
 
     }
 }
+
+
 int main(int argc, char *argv[])
 {
     int wWidth = 1280;
@@ -105,7 +106,7 @@ int main(int argc, char *argv[])
     for(auto& entity : entitys)
     {
         entity.text = sf::Text(entity.name, myFont, font.size);
-        entity.text.setPosition(entity.shape->getPosition().x, entity.shape->getPosition().y - (float)entity.text.getCharacterSize());
+        entity.text.setPosition(entity.shape->getPosition().x, entity.shape->getPosition().y + (float)entity.text.getCharacterSize());
     }
 
 
@@ -127,11 +128,6 @@ int main(int argc, char *argv[])
                     window.close();
                 else if (event.key.code == sf::Keyboard::Q)
                     window.close();
-              //  else if (event.key.code == sf::Keyboard::X)
-              //  {
-              //      circ.velX *= -1.0f;
-              //      circ.velY *= -1.0f;
-              //  }
 
             }
         }
@@ -139,16 +135,18 @@ int main(int argc, char *argv[])
         window.clear();
         for(auto& entity : entitys)
         {
-            entity.shape->setPosition(entity.shape->getPosition().x - entity.velX, entity.shape->getPosition().y - entity.velY);
+            checkBoundries(entity, wWidth, wHeight);
+            entity.shape->setPosition(entity.shape->getPosition().x + entity.velX, entity.shape->getPosition().y + entity.velY);
             auto center = entity.text.getGlobalBounds().getSize() / 2.f;
             float text_posX = entity.shape->getPosition().x + entity.sizeX/2.0f - center.x;
-            float text_posY = entity.shape->getPosition().y + entity.sizeY/2.0f - center.y;
+            float text_posY = entity.shape->getPosition().y + entity.sizeY/2.0f - center.y/2.0f;
             entity.text.setPosition(text_posX,  text_posY - (float)entity.text.getCharacterSize()/2.0f);
             window.draw(*entity.shape);
             window.draw(entity.text);
         }
-
         window.display();
     }
     return 0;
 }
+
+

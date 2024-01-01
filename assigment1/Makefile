@@ -1,10 +1,11 @@
 CC = gcc
 CXX = g++
+SFML_DIR := .
 
 CFLAGS= -C -Wall
-CXXFLAGS = -g -Wall -Wextra -std=c++2a
+CXXFLAGS = -g -O3 -Wall -Wextra -std=c++20
 CXXFLAGS += -Ivendor/glad/include
-LDLIBS = -lsfml-graphics -lsfml-window -lsfml-system
+LDLIBS = -O3 -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lGL -L$(SFML_DIR)/lib
 
 OBJDIR = obj
 BINDIR = bin
