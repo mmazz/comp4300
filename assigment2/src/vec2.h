@@ -24,6 +24,7 @@ class Vec2
         void operator /= (const float val) const;
 
         float dist(const Vec2 & rhs) const;
+        float angle(const Vec2 & rhs) const;
         float length() const;
         void normalize();
 };

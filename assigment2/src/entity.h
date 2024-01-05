@@ -15,6 +15,8 @@ enum class entityTags
 
 class Entity
 {
+    // Por que hago que el contructor de Entity sea privado, y asi solo el
+    // EntityManager es el que puede crear entidades
     friend class EntityManager;
 
     public:
@@ -35,5 +37,6 @@ class Entity
         bool m_active = true;
         size_t m_id = 0;
 
+        // al ser privado no puedo usar make_shared<Entity>
         Entity(const size_t id, const std::string& tag);
 };
