@@ -2,8 +2,10 @@
 
 #include <memory>
 #include "entity.h"
+#include <vector>
+#include <map>
 typedef std::vector<std::shared_ptr<Entity>>	EntityVec;
-typedef std::map<entityTags, EntityVec>		EntityMap;
+typedef std::map<std::string, EntityVec>		EntityMap;
 
 class EntityManager
 {
@@ -14,6 +16,7 @@ class EntityManager
 
         const EntityVec & getEntities();
         const EntityVec & getEntities(const std::string & tag);
+        const std::map<std::string, EntityVec>& getEntityMap();
 
     private:
         EntityVec m_entities;
