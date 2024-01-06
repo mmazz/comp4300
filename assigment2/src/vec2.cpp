@@ -42,21 +42,34 @@ bool Vec2::operator != (const Vec2& rhs) const
     return (x!=rhs.x || y!=rhs.y);
 }
 
-void Vec2::operator += (const Vec2& rhs) const
+void Vec2::operator += (const Vec2& rhs)
 {
+    x = x + rhs.x;
+    y = y + rhs.y;
 }
 
-void Vec2::operator -= (const Vec2& rhs) const
+void Vec2::operator -= (const Vec2& rhs)
 {
+    x = x - rhs.x;
+    y = y - rhs.y;
 }
 
-void Vec2::operator *= (const float val) const
+void Vec2::operator *= (const float val)
 {
+    x = x * val;
+    y = y * val;
 
 }
 
-void Vec2::operator /= (const float val)const
+void Vec2::operator /= (const float val)
 {
+    if(val!=0)
+    {
+        x = x * val;
+        y = y * val;
+    }
+    else
+        std::cerr << "Cant divide by zero" << std::endl;
 
 }
 

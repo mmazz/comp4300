@@ -23,12 +23,15 @@ void EntityManager::update()
 
 void EntityManager::removeDeadEntities(EntityVec & vec)
 {
-    for(auto e: m_entities)
-    {
-        if(!e->m_active)
-            e->m_active = false;
-
-    }
+    std::erase_if(vec, [](auto& entity) { return !entity->isActive(); });
+   // std::vector<std::shared_ptr<Entity>> dead_entities;
+   // for(auto e: vec)
+   // {
+   //     if(!e->isActive())
+   //         dead_entities.push_back(e);
+   // }
+   // for(auto e: dead_entities)
+   //     vec->erase(e);
 }
 
 std::shared_ptr<Entity> EntityManager::addEntity(const std::string & tag)

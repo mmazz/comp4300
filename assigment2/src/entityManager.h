@@ -22,7 +22,7 @@ class EntityManager
         EntityVec m_entities;
         EntityVec m_entitiesToAdd;
         EntityMap m_entityMap;
-        size_t m_totalEntities = 0;
+        size_t    m_totalEntities = 0;
 
         void removeDeadEntities(EntityVec & vec);
 };
