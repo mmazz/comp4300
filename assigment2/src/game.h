@@ -10,10 +10,21 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/System/Clock.hpp>
-
-struct PlayerConfig { int SR, CR, FR, FG, FB, OR, OG, OB, OT, V; float S; };
-struct EnemyConfig { int SR, CR, OR, OG, OB, OT, VMIN, VMAX, L, SI; float SMIN, SMAX; } ;
-struct BulletConfig { int SR, CR, FR, FG, FB, OR, OG, OB, OT, V, L ; float S; };
+/*
+ * Shape Radius: SR             Collision Radius: CR     Speed: S
+ * Fill Color: RGB, FR,FG,FB     Outline Color: OR, OG, OB
+ *  Outline Thickness: OT       Shape Vertices: V
+ *
+ *  Enemy: Same, with MAX y MIN speed and vertices
+ *  Small Lifespan: L
+ *  Spawn Interval: SP
+ *
+ * Bullet:
+ * Lifespan: L
+ */
+struct PlayerConfig { int SR, CR; float S; int FR, FG, FB, OR, OG, OB, OT, V;};
+struct EnemyConfig { int SR, CR; float SMIN, SMAX; int OR, OG, OB, OT, VMIN, VMAX, L, SI;  } ;
+struct BulletConfig { int SR, CR; float S; int FR, FG, FB, OR, OG, OB, OT, V, L ;  };
 struct fontData{
     std::string file;
     int size;
