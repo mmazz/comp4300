@@ -1,14 +1,14 @@
 #include "game.h"
 #include "components.h"
 
-#include <SFML/Window/Keyboard.hpp>
-#include <SFML/Window/WindowStyle.hpp>
 #include <any>
 #include <complex>
 #include <imgui-SFML.h>
 #include <iostream>
 #include <fstream>
 #include <memory>
+
+inline extern const double PI{ 3.14159265359 };
 
 Game::Game(const std::string & config)
 {
@@ -26,7 +26,9 @@ void Game::init(const std::string & path)
     m_window.setFramerateLimit(m_frameRate);
 	m_text.setPosition(0, 0);
 	m_text.setString("Score: " + std::to_string(m_score));
-    ImGui::SFML::Init(m_window);
+    ImGui::SFML::Init(m_window, true);
+    ImGui::GetStyle().ScaleAllSizes(1.0f);
+
     spawnPlayer();
 }
 
@@ -81,7 +83,6 @@ void Game::LoadConfig(const std::string & path)
 
 void Game::run()
 {
-
     while (m_running)
     {
         m_entities.update();
@@ -89,14 +90,19 @@ void Game::run()
         ImGui::SFML::Update(m_window, m_deltaClock.restart());
         if(!m_paused)
         {
-            sEnemySpawner();
-            sMovement();
-            sCollision();
-            sLifespan();
+            if(m_spawn)
+                sEnemySpawner();
+            if (m_movement)
+                sMovement();
+            if(m_collision)
+                sCollision();
+            if(m_lifespan)
+                sLifespan();
         }
         sGUI();
         sUserInput();
-        sRender();
+        if(m_render)
+            sRender();
 
         m_currentFrame++;
     }
@@ -120,7 +126,7 @@ void Game::spawnPlayer()
 
     entity->cInput     = std::make_shared<CInput>();
     entity->cCollision = std::make_shared<CCollision>(m_playerConfig.CR);
-    entity->cScore     = std::make_shared<CScore>(0.0f);
+    entity->cScore     = std::make_shared<CScore>(1.0f);
 
     m_player = entity;
 }
@@ -128,13 +134,19 @@ void Game::spawnPlayer()
 void Game::spawnEnemy()
 {
     auto entity = m_entities.addEntity("enemy");
-    float ex = rand() % m_width;
-    float ey = rand() % m_height;
+    float ex = rand() % (m_width-2);
+    float ey = rand() % (m_height-2);
+    // Esta mal esto...
     float speed = rand() % (int)(1+ m_enemyConfig.SMAX - m_enemyConfig.SMIN);
-    entity->cTransform = std::make_shared<CTransform>(Vec2(ex, ey), Vec2(2.0f, 2.0f), 0.0f);
-
+    Vec2 norm{ex, ey};
+    norm.normalize();
+    Vec2 velocity{speed*norm.x, speed*norm.y};
+    float r = rand() % 255;
+    float g = rand() % 255;
+    float b = rand() % 255;
     float  shape = rand() % (1 + m_enemyConfig.VMAX-m_enemyConfig.VMIN);
-    entity->cShape= std::make_shared<CShape>(m_enemyConfig.SR, shape, sf::Color(10, 10, 10),
+    entity->cTransform = std::make_shared<CTransform>(Vec2(ex, ey), velocity, 0.0f);
+    entity->cShape= std::make_shared<CShape>(m_enemyConfig.SR, shape, sf::Color(r, g, b),
             sf::Color(m_enemyConfig.OR, m_enemyConfig.OG, m_enemyConfig.OB), m_enemyConfig.OT);
     entity->cLifespan = std::make_shared<CLifespan>(m_enemyConfig.L);
     entity->cCollision= std::make_shared<CCollision>(m_enemyConfig.CR);
@@ -145,7 +157,7 @@ void  Game::spawnBullet(std::shared_ptr<Entity> e, const Vec2 & target)
 {
     auto entity = m_entities.addEntity("bullet");
     float speed = m_bulletConfig.S;
-	Vec2 difference{ target.x - e->cTransform->pos.x, target.y -  e->cTransform->pos.y };
+	Vec2 difference{ target.x - e->cTransform->pos.x, target.y - e->cTransform->pos.y };
 	difference.normalize();
 	Vec2 velocity{m_bulletConfig.S * difference.x, m_bulletConfig.S * difference.y};
     entity->cTransform = std::make_shared<CTransform>(Vec2(e->cTransform->pos.x, e->cTransform->pos.y), velocity, 0.0f);
@@ -239,10 +251,7 @@ void Game::sCollision()
 
         if (distSQ < collisionRadiusSQ)
         {
-            //Updates the score
-            //m_score += enemy->cScore->score;
             m_score = 0;
-           // m_text.setString("Score: " + std::to_string(m_score));
 
             spawnSmallEnemies(enemy);
             enemy->destroy();
@@ -264,13 +273,28 @@ void Game::sCollision()
             if (distSQ < collisionRadiusSQ)
             {
                 //Updates the score
-                m_score += enemy->cScore->score;
-                m_score = 0;
+                std::cout << m_score << std::endl;
+                m_score += m_player->cScore->score;
                 m_text.setString("Score: " + std::to_string(m_score));
 
                 spawnSmallEnemies(enemy);
                 enemy->destroy();
                 bullet->destroy();
+            }
+        }
+    }
+    for (auto e: m_entities.getEntities("enemy"))
+    {
+        for (auto enemy: m_entities.getEntities("enemy"))
+        {
+            Vec2 diff{ enemy->cTransform->pos.x - e->cTransform->pos.x , enemy->cTransform->pos.y - e->cTransform->pos.y };
+
+            double collisionRadiusSQ{ (e->cCollision->radius + enemy->cCollision->radius) * (e->cCollision->radius + enemy->cCollision->radius) };
+            double distSQ{ (diff.x * diff.x) + (diff.y * diff.y) };
+
+            if (distSQ < collisionRadiusSQ)
+            {
+
             }
         }
     }
@@ -282,6 +306,8 @@ void Game::sUserInput()
     sf::Event event;
     while(m_window.pollEvent(event))
     {
+        ImGui::SFML::ProcessEvent(m_window, event);
+
         if(event.type == sf::Event::Closed)
         {
             m_running = false;
@@ -342,12 +368,46 @@ void Game::sUserInput()
 void  Game::sGUI()
 {
     ImGui::Begin("Geometry Wars");
-    ImGui::Text("ASD");
+    ImGui::Text("Geometry Wars");
+    ImGui::Checkbox("Movement", &m_movement);
+    ImGui::Checkbox("Lifespan", &m_lifespan);
+    ImGui::Checkbox("Collision", &m_collision);
+    ImGui::Checkbox("Spawning", &m_spawn);
+    ImGui::SliderInt("Spawn rate", &m_enemyConfig.SP, 0, 300);
+    ImGui::SliderInt("Enemy Life", &m_enemyConfig.L, 0, 1000);
+    ImGui::Checkbox("Rendering", &m_render);
     ImGui::End();
 }
 
 void  Game::spawnSmallEnemies(std::shared_ptr<Entity> e)
 {
+    int degree = e->cShape->circle.getPointCount();
+    std::cout << "degree " << degree << std::endl;
+    float angleDelta = 360.0f/degree * PI / 180.0 ;
+    std::cout << "angle " << angleDelta<< std::endl;
+    float posX = e->cTransform->pos.x;
+    float posY = e->cTransform->pos.y;
+    float speed = 2.0f;
+    Vec2 norm{posX, posY};
+    norm.normalize();
+    for(int i=0; i<degree; i++)
+    {
+        auto entity = m_entities.addEntity("smallEnemy");
+
+        float Xchange = cos((i+1) * angleDelta);
+        float Ychange = sin((i+1) * angleDelta);
+        std::cout << Xchange << " " << Ychange << std::endl;
+        std::cout << Xchange*speed*norm.x << " " << Ychange*speed*norm.y<< std::endl;
+        std::cout << std::endl;
+        Vec2 velocity{Xchange*speed*norm.x*e->cTransform->velocity.x, Ychange*speed*norm.y*e->cTransform->velocity.y};
+
+        entity->cTransform = std::make_shared<CTransform>(Vec2(posX, posY), velocity, 0.0f);
+
+        entity->cShape= std::make_shared<CShape>(m_enemyConfig.SR/10, degree,  sf::Color(m_bulletConfig.FR, m_bulletConfig.FG, m_bulletConfig.FB),
+                sf::Color(m_enemyConfig.OR, m_enemyConfig.OG, m_enemyConfig.OB), m_enemyConfig.OT);
+        entity->cLifespan = std::make_shared<CLifespan>(m_enemyConfig.L);
+        entity->cCollision= std::make_shared<CCollision>(m_enemyConfig.CR);
+    }
 }
 
 

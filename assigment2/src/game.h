@@ -2,6 +2,14 @@
 
 #include "entity.h"
 #include "entityManager.h"
+#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/Window.hpp>
 #include "../include/imgui.h"
 #include "../include/imgui-SFML.h"
 #include <fstream>
@@ -54,6 +62,12 @@ class Game
         int				 m_lastEnemySpawnTime = 0;
         bool             m_paused  = false;
         bool             m_running = true;
+
+        bool m_movement  = true;
+        bool m_lifespan  = true;
+        bool m_collision = true;
+        bool m_spawn     = true;
+        bool m_render    = true;
 
         std::shared_ptr<Entity> m_player;
 
