@@ -1,5 +1,6 @@
 #include "vec2.h"
 #include <math.h>
+inline extern const double PI{ 3.14159265359 };
 
 Vec2::Vec2()
 {
@@ -72,7 +73,15 @@ void Vec2::operator /= (const float val)
         std::cerr << "Cant divide by zero" << std::endl;
 
 }
-
+float Vec2::dot(const Vec2& b) const
+{
+    float res;
+    float aNorm = this->length();
+    float bNorm = b.length();
+    float angle = this->angle(b);
+    res = this->x * b.x + this->y * b.y;
+    return res;
+}
 void Vec2::normalize()
 {
     float L = length();
@@ -84,7 +93,10 @@ float Vec2::length() const
 {
     return sqrtf(x*x+y*y);
 }
-
+float Vec2::norm2() const
+{
+    return x*x+y*y;
+}
 float Vec2::dist(const Vec2& rhs) const
 {
     float res = pow(x-rhs.x,2) + pow(y-rhs.y, 2);
@@ -93,6 +105,6 @@ float Vec2::dist(const Vec2& rhs) const
 float Vec2::angle(const Vec2& rhs) const
 {
     Vec2 Diff = Vec2(x - rhs.x, y - rhs.y);
-    float res = atan2f(Diff.x, Diff.y);
+    float res = atan2f(Diff.y, Diff.x)*PI/180;
     return res;
 }

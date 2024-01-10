@@ -28,4 +28,6 @@ class Vec2
         float angle(const Vec2 & rhs) const;
         float length() const;
         void normalize();
+        float norm2() const;
+        float dot(const Vec2& b) const;
 };

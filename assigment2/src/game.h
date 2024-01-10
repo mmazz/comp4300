@@ -60,6 +60,7 @@ class Game
         int              m_score = 0;
         int				 m_currentFrame = 0 ;
         int				 m_lastEnemySpawnTime = 0;
+        int              m_lastSpecialBulletSpawnTime = 0;
         bool             m_paused  = false;
         bool             m_running = true;
 
@@ -82,11 +83,12 @@ class Game
         void sEnemySpawner();							//Systems: Spawns enemies
         void sCollision();								//Systems: Collision detection
 
+        void updateText(const sf::Text& text);
         void spawnPlayer();
         void spawnEnemy();
         void spawnSmallEnemies(std::shared_ptr<Entity> entity);
         void spawnBullet(std::shared_ptr<Entity> entity, const Vec2& mousePos);
-        void spawnSpecialWeapon(std::shared_ptr<Entity> entity);
+        void spawnSpecialWeapon(std::shared_ptr<Entity> entity, const Vec2& mousePos);
         void sGUI();
 };
 
