@@ -1,0 +1,33 @@
+Texture     4           include/images/megaman/megaStand.png
+Texture     5           include/images/megaman/megaShot.png
+Texture     2           include/images/megaman/megaRun.png
+Texture     3           include/images/megaman/megaJump.png
+Texture     6           include/images/megaman/megaBuster.png
+Texture     1           include/images/mario/ground.png
+Texture     12          include/images/mario/SmallCloud.png
+Texture     7           include/images/animations/explosion.png
+Texture     8           include/images/mario/BigBush.png
+Texture     10          include/images/mario/SmallBush.png
+Texture     13          include/images/mario/GoombaWalk.png
+Texture     14          include/images/mario/Busher.png
+Texture     15          include/images/mario/SmallPipe.png
+Texture     16          include/images/mario/BigCloud.png
+Texture     17          include/images/mario/GoombaDeath.png
+Animation   4           4           1   1
+Animation   1           1           1   1
+Animation   2           2           3   8
+Animation   3           3           1   1
+Animation   5           5           1   1
+Animation   10          8           1   1
+Animation   6           6           1   1
+Animation   12          12          1   1
+Animation   7           7           12  8
+Animation   14          10           1   1
+Animation   15          15           1   1
+Animation   16          14           1   1
+Animation   17          13           2   8
+Animation   18          16           1   1
+Animation   19          17           2   6
+Font        Number           include/fonts/numbers.ttf
+Font        Tech           include/fonts/tech.ttf
+Font        Pixeled           include/fonts/pixeled.ttf
