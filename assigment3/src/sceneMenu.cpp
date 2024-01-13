@@ -10,12 +10,16 @@
 Scene_Menu::Scene_Menu(GameEngine *game)
     : Scene(game)
 {
+
+ std::cout<< "scene menu creation" << std::endl;
     init();
 }
 
 void Scene_Menu::init() {
 
     registerAction(sf::Keyboard::W, "UP");
+    registerAction(sf::Keyboard::S, "DOWN");
+    registerAction(sf::Keyboard::D, "PLAY");
     m_title = "Mega Mario";
     m_menuStrings.push_back("Level  1");
     m_menuStrings.push_back("Level  2");
@@ -25,14 +29,15 @@ void Scene_Menu::init() {
     m_levelPaths.push_back("include/levels/level2.txt");
     m_levelPaths.push_back("include/levels/level3.txt");
 
-    m_menuText.setFont(m_game->getAssets().getFont("Number"));
+    m_menuText.setFont(m_game->getAssets().getFont("Pixeled"));
     m_menuText.setCharacterSize(64);
- std::cout<< " menu init" << std::endl;
 }
 
 void Scene_Menu::update()
 {
+    sUserInput();
   m_entityManager.update();
+  sRender();
 }
 
 void Scene_Menu::sUserInput()
@@ -48,6 +53,7 @@ void Scene_Menu::sUserInput()
         // this event is triggered when a key is pressed
         if (event.type == sf::Event::KeyPressed)
         {
+                    std::cout << "press " << std::endl;
             switch (event.key.code)
             {
                 case sf::Keyboard::Escape:
@@ -57,6 +63,7 @@ void Scene_Menu::sUserInput()
                 }
                 case sf::Keyboard::W:
                 {
+                    std::cout << "w " << std::endl;
                     if (m_selectedMenuIndex > 0)
                     {
                         m_selectedMenuIndex--;
@@ -74,7 +81,8 @@ void Scene_Menu::sUserInput()
                 }
                 case sf::Keyboard::D:
                 {
-                    m_game->changeScene("play",
+                    std::cout << "D " << std::endl;
+                    m_game->changeScene("PLAY",
                     std::make_shared<Scene_Play>(
                     m_game, m_levelPaths.at(m_selectedMenuIndex)));
                     break;
@@ -130,6 +138,7 @@ void Scene_Menu::sDoAction(const Action &action)
 {
     if(action.type() == "START")
     {
+                    std::cout << action.name()<< std::endl;
         if(action.name() == "UP")
         {
             if (m_selectedMenuIndex > 0) {m_selectedMenuIndex--;}
@@ -142,6 +151,7 @@ void Scene_Menu::sDoAction(const Action &action)
         else if (action.name() == "PLAY")
         {
             m_game->changeScene("PLAY", std::make_shared<Scene_Play>(m_game, m_levelPaths[m_selectedMenuIndex]));
+            std::cout << "PLAY" << std::endl;
         }
         else if (action.name() == "QUIT")
         {

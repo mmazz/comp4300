@@ -1,33 +1,39 @@
-Texture     4           include/images/megaman/megaStand.png
-Texture     5           include/images/megaman/megaShot.png
-Texture     2           include/images/megaman/megaRun.png
-Texture     3           include/images/megaman/megaJump.png
-Texture     6           include/images/megaman/megaBuster.png
-Texture     1           include/images/mario/ground.png
-Texture     12          include/images/mario/SmallCloud.png
-Texture     7           include/images/animations/explosion.png
-Texture     8           include/images/mario/BigBush.png
-Texture     10          include/images/mario/SmallBush.png
-Texture     13          include/images/mario/GoombaWalk.png
-Texture     14          include/images/mario/Busher.png
-Texture     15          include/images/mario/SmallPipe.png
-Texture     16          include/images/mario/BigCloud.png
-Texture     17          include/images/mario/GoombaDeath.png
-Animation   4           4           1   1
-Animation   1           1           1   1
-Animation   2           2           3   8
-Animation   3           3           1   1
-Animation   5           5           1   1
-Animation   10          8           1   1
-Animation   6           6           1   1
-Animation   12          12          1   1
-Animation   7           7           12  8
-Animation   14          10           1   1
-Animation   15          15           1   1
-Animation   16          14           1   1
-Animation   17          13           2   8
-Animation   18          16           1   1
-Animation   19          17           2   6
-Font        Number           include/fonts/numbers.ttf
-Font        Tech           include/fonts/tech.ttf
+Texture   TexStand   include/images/megaman/megaStand.png
+Texture   TexRun     include/images/megaman/megaRun.png
+Texture   TexAir     include/images/megaman/megaJump.png
+Texture   TexBuster  include/images/megaman/megaBuster.png
+Texture   TexExplode include/images/animations/explosion.png
+Texture   TexCoin    include/images/animations/coinspin.png
+Texture   TexQ2      include/images/mario/question2.png
+Texture   TexPole    include/images/mario/Flagpole.png
+Texture   TexGround  include/images/mario/ground.png
+Texture   TexPipeS   include/images/mario/SmallPipe.png
+Texture   TexPipeT   include/images/mario/TallPipe.png
+Texture   TexCloudB  include/images/mario/BigCloud.png
+Texture   TexCloudS  include/images/mario/SmallCloud.png
+Texture   TexBrick   include/images/mario/brick.png
+Texture   TexBlock   include/images/mario/block.png
+Texture   TexBush    include/images/mario/SmallBush.png
+Texture   TexBushBig include/images/mario/BigBush.png
+Texture   TexBlock   include/images/mario/block.png
+Animation Stand      TexStand    1    1
+Animation Run        TexRun      3   8
+Animation Air        TexAir      1    1
+Animation Buster     TexBuster   1    1
+Animation Explosion  TexExplode 12    8
+Animation Coin       TexCoin     6    5
+Animation Brick      TexBrick    1    1
+Animation Block      TexBlock    1    1
+Animation Question  TexQ2       1     1
+Animation PipeTall   TexPipeT    1    1
+Animation PipeSmall  TexPipeS    1    1
+Animation CloudBig   TexCloudB   1    1
+Animation CloudSmall TexCloudS   1    1
+Animation Bush       TexBush     1    1
+Animation BushBig    TexBushBig  1    1
+Animation Ground     TexGround   1    1
+Animation Block      TexBlock    1    1
+Animation Pole       TexPole     1    1
+Font        Numbers           include/fonts/numbers.ttf
 Font        Pixeled           include/fonts/pixeled.ttf
+Font        Tech              include/fonts/tech.ttf

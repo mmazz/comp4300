@@ -16,7 +16,7 @@ void GameEngine::init(const std::string &path)
 
   m_window.create(sf::VideoMode(1280, 770), "Game Mechaman");
   m_window.setFramerateLimit(60);
-
+  m_currentScene = "MENU";
   changeScene("MENU", std::make_shared<Scene_Menu>(this));
 }
 
@@ -39,7 +39,6 @@ void GameEngine::run()
 {
     while (isRunning())
     {
-        std::cout << "run gameEngine" << std::endl;
         update();
     }
 }
@@ -69,10 +68,11 @@ void GameEngine::sUserInput()
       // if the current scene does not have an action associated with this key,
       // skip the event
       if (currentScene()->getActionMap().find(event.key.code) == currentScene()->getActionMap().end())
-      { continue; }
+      {
+          continue;
+      }
       // determinate start or end action whether it was pres or release
-      const std::string actionType = (event.type == sf::Event::KeyPressed)
-                                    ? "START" : "END";
+      const std::string actionType = (event.type == sf::Event::KeyPressed ? "START" : "END");
       // look up the action and send the action to the scene
       currentScene()->sDoAction(Action(currentScene()->getActionMap().at(event.key.code), actionType));
     }
@@ -82,8 +82,12 @@ void GameEngine::sUserInput()
 void GameEngine::changeScene(const std::string & sceneName, const std::shared_ptr<Scene> &scene,
                              bool endCurrentScene)
 {
+    m_currentScene = sceneName;
+
   if (scene)
+  {
     m_sceneMap[sceneName] = scene;
+  }
   else
   {
     if(m_sceneMap.find(sceneName) == m_sceneMap.end())
@@ -93,7 +97,9 @@ void GameEngine::changeScene(const std::string & sceneName, const std::shared_pt
     }
   }
   if(endCurrentScene)
+  {
       m_sceneMap.erase(m_sceneMap.find(m_currentScene));
+  }
 }
 
 const Assets &GameEngine::getAssets() const
@@ -109,8 +115,7 @@ void GameEngine::quit()
 
 void GameEngine::update()
 {
-        std::cout << "udapte gameEngine" << std::endl;
-  m_sceneMap.at(m_currentScene)->update();
-        std::cout << "posupdate gameEngine" << std::endl;
-  m_currentFrames++;
+    sUserInput();
+    m_sceneMap.at(m_currentScene)->update();
+    m_currentFrames++;
 }

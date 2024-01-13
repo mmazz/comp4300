@@ -1,8 +1,14 @@
 #include "scene.h"
 
-Scene::Scene(GameEngine *game_engine) : m_game(game_engine) {}
+Scene::Scene(GameEngine *game_engine) : m_game(game_engine) {
 
-Scene::Scene(){};
+    std::cout << "scene creation" << std::endl;
+}
+
+Scene::Scene(){
+
+    std::cout << "scene creation default" << std::endl;
+};
 
 void Scene::registerAction(int inputKey, const std::string & actionName) {
   m_actionMap[inputKey] = actionName;
@@ -11,14 +17,12 @@ void Scene::registerAction(int inputKey, const std::string & actionName) {
 
 size_t Scene::width()
 {
-    //return m_game->window().getSize().x;
-    return 0;
+    return m_game->window().getSize().x;
 }
 
 size_t Scene::height()
 {
-    return 0 ;
-   // return m_game->window().getSize().y;
+   return m_game->window().getSize().y;
 }
 
 void Scene::drawLine(const Vec2 &p1, const Vec2 &p2) {
@@ -27,7 +31,7 @@ void Scene::drawLine(const Vec2 &p1, const Vec2 &p2) {
   line[0].position = sf::Vector2f(p1.x, p1.y);
   line[1].position = sf::Vector2f(p2.x, p2.y);
 
-//  this->m_game->window().draw(line);
+  this->m_game->window().draw(line);
 }
 
 const ActionMap &Scene::getActionMap() const { return m_actionMap; }

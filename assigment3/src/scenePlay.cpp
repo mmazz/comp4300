@@ -20,7 +20,10 @@ void Scene_Play::init(const std::string &levelPath)
   registerAction(sf::Keyboard::T     , "TOGGLE_TEXTURE");
   registerAction(sf::Keyboard::C     , "TOGGLE_COLLISION");
   registerAction(sf::Keyboard::P     , "TOGGLE_GRID");
-
+  registerAction(sf::Keyboard::Space , "UP");
+  registerAction(sf::Keyboard::A     , "RIGHT");
+  registerAction(sf::Keyboard::D     , "LEFT");
+  registerAction(sf::Keyboard::S     , "FIRE");
   //  TODO: Register all other gameplay Actions
 
   m_gridText.setCharacterSize(12);
@@ -60,7 +63,7 @@ void Scene_Play::loadLevel(const std::string &filePath)
     brick->addComponents<CAnimation>(m_game->getAssets().getAnimation("Brick"), true);
     brick->addComponents<CTransform>(Vec2(96, 480));
     // NOTE : you finally code should position the entity with the grid x,y position read from the file
-    //  brick->addComponents<CTransform>(gridToMidPixel(gridX, gridY, brick))
+    //  brick->addComponents<CTransform>(gridToMidPixel(gridX, gridY, brick));
 
     if (brick->getComponent<CAnimation>().animation.getName() == "Brick")
       std::cout << "This could be a good way of identifying if a tile is a brick!" << std::endl;
@@ -68,10 +71,10 @@ void Scene_Play::loadLevel(const std::string &filePath)
 
 
     auto block = m_entityManager.addEntity("title");
-    block->addComponents<CAnimation>(m_game->getAssets().getAnimation("Block"),
-    true); block->addComponents<CTransform>(Vec2(224, 480));
+    block->addComponents<CAnimation>(m_game->getAssets().getAnimation("Block"), true);
+    block->addComponents<CTransform>(Vec2(224, 480));
   //  // add a bounding box, this will now show up if we press the 'C' key
-    block->addComponents<CBoundingBox>(m_game->getAssets().getAnimation("block").getSize());
+    block->addComponents<CBoundingBox>(m_game->getAssets().getAnimation("Block").getSize());
 
     auto question = m_entityManager.addEntity("tile");
     question->addComponents<CAnimation>(m_game->getAssets().getAnimation("Question"),true);
@@ -206,8 +209,8 @@ void Scene_Play::onEnd()
 {
   // TODO: when the scene ends, change back to the MENU scene
   //       use m_game->changeState(correct params)
+    m_game->changeScene("MENU", nullptr, true);
 }
-
 void Scene_Play::sRender()
 {
   // color the background darker, so you know that the game is paused

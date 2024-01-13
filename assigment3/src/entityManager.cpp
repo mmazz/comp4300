@@ -1,10 +1,11 @@
 
 #include "entityManager.h"
 #include "entity.h"
-EntityManager::EntityManager() = default;
+EntityManager::EntityManager(){}
 
 void EntityManager::update() {
   // add all the entities that are pending
+
   for (auto &e: m_entitiesToAdd) {
     // add it to the vector of all entities
     m_entities.push_back(e);

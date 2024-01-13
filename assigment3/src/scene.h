@@ -2,6 +2,7 @@
 
 #include "action.h"
 #include "entityManager.h"
+#include "gameEngine.h"
 #include <memory>
 
 

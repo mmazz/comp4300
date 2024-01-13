@@ -85,8 +85,6 @@ void Assets::addFont(const std::string & fontName, const std::string & path)
 
 const sf::Font & Assets::getFont(const std::string & fontName) const
 {
-    std::cout << "por" << std::endl;
     assert(m_fontMap.find(fontName) != m_fontMap.end());
-    std::cout << "sali" << std::endl;
     return m_fontMap.at(fontName);
 }

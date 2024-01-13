@@ -5,6 +5,7 @@
 #include "scene.h"
 #include <memory>
 
+class Scene;
 
 typedef std::map<std::string, std::shared_ptr<Scene>> SceneMap;
 
