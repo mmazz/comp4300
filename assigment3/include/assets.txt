@@ -17,7 +17,7 @@ Texture   TexBush    include/images/mario/SmallBush.png
 Texture   TexBushBig include/images/mario/BigBush.png
 Texture   TexBlock   include/images/mario/block.png
 Animation Stand      TexStand    1    1
-Animation Run        TexRun      3   8
+Animation Run        TexRun      3    8
 Animation Air        TexAir      1    1
 Animation Buster     TexBuster   1    1
 Animation Explosion  TexExplode 12    8

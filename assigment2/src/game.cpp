@@ -63,8 +63,7 @@ void Game::init(const std::string & path)
 
 void Game::LoadConfig(const std::string & path)
 {
-    const std::string& filepath = "config.txt";
-    std::ifstream stream(filepath);
+    std::ifstream stream(path);
     std::string line, word;
     fontData font;
     while (getline(stream, line))

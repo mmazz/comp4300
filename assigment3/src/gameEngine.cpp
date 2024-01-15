@@ -14,7 +14,7 @@ void GameEngine::init(const std::string &path)
 {
   m_assets.loadFromFile(path);
 
-  m_window.create(sf::VideoMode(1280, 770), "Game Mechaman");
+  m_window.create(sf::VideoMode(1080, 810), "Game Mechaman");
   m_window.setFramerateLimit(60);
   m_currentScene = "MENU";
   changeScene("MENU", std::make_shared<Scene_Menu>(this));
@@ -82,7 +82,7 @@ void GameEngine::sUserInput()
 void GameEngine::changeScene(const std::string & sceneName, const std::shared_ptr<Scene> &scene,
                              bool endCurrentScene)
 {
-    m_currentScene = sceneName;
+  m_currentScene = sceneName;
 
   if (scene)
   {

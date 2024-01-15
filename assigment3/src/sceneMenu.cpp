@@ -11,7 +11,6 @@ Scene_Menu::Scene_Menu(GameEngine *game)
     : Scene(game)
 {
 
- std::cout<< "scene menu creation" << std::endl;
     init();
 }
 
@@ -53,7 +52,6 @@ void Scene_Menu::sUserInput()
         // this event is triggered when a key is pressed
         if (event.type == sf::Event::KeyPressed)
         {
-                    std::cout << "press " << std::endl;
             switch (event.key.code)
             {
                 case sf::Keyboard::Escape:
@@ -63,7 +61,6 @@ void Scene_Menu::sUserInput()
                 }
                 case sf::Keyboard::W:
                 {
-                    std::cout << "w " << std::endl;
                     if (m_selectedMenuIndex > 0)
                     {
                         m_selectedMenuIndex--;
@@ -81,7 +78,6 @@ void Scene_Menu::sUserInput()
                 }
                 case sf::Keyboard::D:
                 {
-                    std::cout << "D " << std::endl;
                     m_game->changeScene("PLAY",
                     std::make_shared<Scene_Play>(
                     m_game, m_levelPaths.at(m_selectedMenuIndex)));
@@ -138,7 +134,6 @@ void Scene_Menu::sDoAction(const Action &action)
 {
     if(action.type() == "START")
     {
-                    std::cout << action.name()<< std::endl;
         if(action.name() == "UP")
         {
             if (m_selectedMenuIndex > 0) {m_selectedMenuIndex--;}
@@ -151,7 +146,6 @@ void Scene_Menu::sDoAction(const Action &action)
         else if (action.name() == "PLAY")
         {
             m_game->changeScene("PLAY", std::make_shared<Scene_Play>(m_game, m_levelPaths[m_selectedMenuIndex]));
-            std::cout << "PLAY" << std::endl;
         }
         else if (action.name() == "QUIT")
         {

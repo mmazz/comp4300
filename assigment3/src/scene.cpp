@@ -2,12 +2,10 @@
 
 Scene::Scene(GameEngine *game_engine) : m_game(game_engine) {
 
-    std::cout << "scene creation" << std::endl;
 }
 
 Scene::Scene(){
 
-    std::cout << "scene creation default" << std::endl;
 };
 
 void Scene::registerAction(int inputKey, const std::string & actionName) {
