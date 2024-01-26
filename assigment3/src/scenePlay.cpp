@@ -18,13 +18,13 @@ void Scene_Play::init(const std::string &levelPath)
 {
   registerAction(sf::Keyboard::Z     , "PAUSE");
   registerAction(sf::Keyboard::Escape, "QUIT");
-  registerAction(sf::Keyboard::Q, "QUIT");
+  registerAction(sf::Keyboard::Q     , "QUIT");
   registerAction(sf::Keyboard::T     , "TOGGLE_TEXTURE");
   registerAction(sf::Keyboard::C     , "TOGGLE_COLLISION");
   registerAction(sf::Keyboard::G     , "TOGGLE_GRID");
   registerAction(sf::Keyboard::Space , "UP");
-  registerAction(sf::Keyboard::A     , "RIGHT");
-  registerAction(sf::Keyboard::D     , "LEFT");
+  registerAction(sf::Keyboard::D     , "RIGHT");
+  registerAction(sf::Keyboard::A     , "LEFT");
   registerAction(sf::Keyboard::S     , "FIRE");
   //  TODO: Register all other gameplay Actions
 
@@ -187,32 +187,37 @@ void Scene_Play::sMovement()
     float posX = m_player->getComponent<CTransform>().pos.x ;
     float posY = m_player->getComponent<CTransform>().pos.y ;
     Vec2 BB = m_player->getComponent<CBoundingBox>().halfSize;
-    if(m_player->getComponent<CInput>().up)
+    if(m_player->getComponent<CInput>().up and m_player->getComponent<CState>().state!= "jump")
     {
         m_player->getComponent<CState>().state = "jump";
         playerVelocity.y -= 3;
     }
     if(m_player->getComponent<CInput>().right)
     {
-        if(posX > BB.x)
+        if(posX < m_game->window().getSize().x - BB.x)
         {
-        m_player->getComponent<CState>().state = "run";
-        playerVelocity.x -= 3;
+            m_player->getComponent<CTransform>().scale = (Vec2(1.0, 1.0));
+            playerVelocity.x += 3;
         }
     }
     if(m_player->getComponent<CInput>().left)
     {
-        if(posX < m_game->window().getSize().x - BB.x)
+        if(posX > BB.x)
         {
-        m_player->getComponent<CState>().state = "run";
-        playerVelocity.x += 3;
+            m_player->getComponent<CTransform>().scale = (Vec2(-1.0, 1.0));
+            playerVelocity.x -= 3;
         }
     }
     playerVelocity.y += m_player->getComponent<CGravity>().gravity;
+    float signX = copysign(1, playerVelocity.x);
+    float signY = copysign(1, playerVelocity.y);
+    playerVelocity.x = signX * std::fmin(fabs(playerVelocity.x), m_playerConfig.SX);
+    playerVelocity.y = signY * std::fmin(fabs(playerVelocity.y), m_playerConfig.SY);
     m_player->getComponent<CTransform>().velocity = playerVelocity;
 
     for (auto e: m_entityManager.getEntities())
     {
+        e->getComponent<CTransform>().prevPos = e->getComponent<CTransform>().pos;
         e->getComponent<CTransform>().pos+= e->getComponent<CTransform>().velocity;
     }
 
@@ -241,16 +246,36 @@ void Scene_Play::sCollision()
   //       used by the Animation system
   // TODO: check to see if the player has fallen down a hole (y >height())
   // TODO: Dont let the player walk off the left side of the map
+    for (auto &e: m_entityManager.getEntities())
+    {
+      if (e->hasComponent<CBoundingBox>())
+      {
+        auto &box = e->getComponent<CBoundingBox>();
+        Vec2 overlap = m_physics.GetOverlap(m_player, e);
+        if(overlap.x>0 and overlap.y>0)
+        {
+            Vec2 playerPos = m_player->getComponent<CTransform>().pos;
+            Vec2 tilePos = e->getComponent<CTransform>().pos;
 
+            if(playerPos.y < tilePos.y)
+            {
+                m_player->getComponent<CTransform>().pos.y -= overlap.y;
+                m_player->getComponent<CTransform>().velocity.y = 0;
+
+
+            }
+        }
+      }
+    }
 }
 
 void Scene_Play::sDoAction(const Action &action)
 {
   if (action.type() == "START")
   {
-         if (action.name() == "TOGGLE_TEXTURE") { m_drawTextures = !m_drawTextures; }
-    else if (action.name() == "TOGGLE_COLLISION") { m_drawCollision= !m_drawCollision; }
-    else if (action.name() == "TOGGLE_GRID") { m_drawGrid= !m_drawGrid; }
+         if (action.name() == "TOGGLE_TEXTURE")   { m_drawTextures  = !m_drawTextures; }
+    else if (action.name() == "TOGGLE_COLLISION") { m_drawCollision = !m_drawCollision; }
+    else if (action.name() == "TOGGLE_GRID")      { m_drawGrid      = !m_drawGrid; }
     else if (action.name() == "PAUSE") {setPaused(!m_paused); }
     else if (action.name() == "QUIT") {onEnd(); }
     else if (action.name() == "UP")

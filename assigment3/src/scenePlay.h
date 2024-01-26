@@ -2,7 +2,7 @@
 #include "common.h"
 #include "physics.h"
 #include "scene.h"
-
+#include <tgmath.h>
 
 class Scene_Play : public Scene
 {
@@ -22,6 +22,7 @@ class Scene_Play : public Scene
         bool                    m_drawGrid = false;
         const Vec2              m_gridSize = {64, 64};
         sf::Text                m_gridText;
+        Physics m_physics;
 
         void init(const std::string &levelPath);
 
